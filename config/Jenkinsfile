@@ -1,0 +1,131 @@
+#!/usr/bin/env groovy
+
+/* Only keep the 2 most recent builds. */
+def projectProperties = [
+    buildDiscarder(logRotator(numToKeepStr: '2')),
+]
+
+if (!env.CHANGE_ID) {
+  if (env.GIT_BRANCH != 'main') {
+    projectProperties.add(pipelineTriggers([pollSCM('H/3 * * * *')]))
+    projectProperties.add(disableConcurrentBuilds())
+  }
+}
+properties(projectProperties)
+
+// Parameters
+@Field def ARTIFACTORY_SERVER = 'artifactory'
+@Field def ARTIFACTORY_REPO = 'app-repo-local'
+@Field def ARTIFACTORY_PATTERN = 'app'
+@Field def PROJECTNAME = 'demo-weblogic'
+@Field def POM_VERSION = ''
+
+timeout(time: 20, unit: 'MINUTES') {
+
+    node ('master') {
+
+        stage ('\u278A Cleanup'){
+            orchestrator('cleanup')
+        }
+
+        stage ('\u278B Checkout') {
+            orchestrator('checkout')
+        }
+
+
+        stage ('\u278C Prepare') {
+            orchestrator('prepare')
+        }
+        
+
+        stage ('\u278D Build App') {
+            orchestrator('build')
+        }
+
+
+        stage ('\u278E Unit Tests') {
+            orchestrator('unitTest')
+        }
+        
+        
+        stage ('\u278F Publish Artifact') {
+            orchestrator('deployArtifactory')
+        }
+
+
+    } // end node
+} // end timeout
+
+//==========================================================================
+
+def orchestrator(String operation) {
+    try{
+        if(operation.equals("cleanup")){
+            cleanup()
+        }else if(operation.equals("checkout")){
+            checkout()
+        }else if(operation.equals("prepare")){
+            prepare()
+        }else if(operation.equals("build")){
+            build()
+        }else if(operation.equals("unitTest")){
+            unitTest()
+        }else if(operation.equals("deployArtifactory")){
+            deployArtifactory()
+        }
+    }catch(Exception err){
+        throw err
+    }
+}
+
+//==========================================================================
+
+def cleanup() {
+    deleteDir()
+    dir("${PROJECTNAME}@tmp") {
+            deleteDir()
+    }
+}
+
+def checkout() {
+    checkout scm
+}
+
+def prepare() {
+    //plugin->pipeline utility step
+    def pom = readMavenPom file: 'pom.xml'
+    POM_VERSION = pom.version
+}
+
+def build() {
+    withMaven(maven:'maven'){
+        sh '''           
+            mvn clean install -Dspring.profiles.active=qa -Dspring.backgroundpreinitializer.ignore=true
+        '''
+    }
+}
+
+def unitTest() {
+    withMaven(maven:'maven'){
+        if (env.GIT_BRANCH != 'main') {
+        sh "mvn org.jacoco:jacoco-maven-plugin:prepare-agent test \
+            -Dmaven.test.failure.ignore=true -Dspring.profiles.active=de"
+        junit testResults: '**/target/surefire-reports/*.xml', 
+        allowEmptyResults: true
+        } else {
+        echo 'Pass'
+        }
+    }
+}
+
+def deployArtifactory() {    
+    sh 'mkdir artifact && cp $(find $(find . -name "target") -iname "*.war") artifact'
+    sh 'ls -la artifact'
+    sh "tar -czvf ${PROJECTNAME}${POM_VERSION}.tar.gz artifact" 
+
+    def server = Artifactory.server ARTIFACTORY_SERVER
+    def buildInfo = Artifactory.newBuildInfo()
+    def uploadSpec = """{"files": [{"pattern": "${PROJECTNAME}${POM_VERSION}.tar.gz","target": "${ARTIFACTORY_REPO}"}]}"""
+
+    server.upload spec: uploadSpec, failNoOp: true 
+}
