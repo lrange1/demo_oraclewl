@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.demosophos</groupId>
 	<artifactId>demo-weblogic</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>demo-weblogic</name>
 	<description>Demo Springboot project to weblogic deploy</description>
 	<packaging>war</packaging>
