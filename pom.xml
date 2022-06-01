@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.demosophos</groupId>
-	<artifactId>demo-weblogic</artifactId>
+	<artifactId>demo_oraclewl</artifactId>
 	<version>0.0.2-SNAPSHOT</version>
 	<name>demo-weblogic</name>
 	<description>Demo Springboot project to weblogic deploy</description>
