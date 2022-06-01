@@ -19,7 +19,7 @@ properties(projectProperties)
 @Field def ARTIFACTORY_SERVER = 'artifactory'
 @Field def ARTIFACTORY_REPO = 'app-repo-local'
 @Field def ARTIFACTORY_PATTERN = 'app'
-@Field def PROJECTNAME = 'demo-weblogic'
+@Field def PROJECTNAME = 'demo_oraclewl'
 @Field def POM_VERSION = ''
 
 timeout(time: 20, unit: 'MINUTES') {
