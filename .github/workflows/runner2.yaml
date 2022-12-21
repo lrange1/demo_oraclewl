@@ -14,7 +14,7 @@ on:
 
 jobs:
   testVersionMaven:
-    runs-on: SBBOGLAPPROLR7
+    runs-on: self-hosted
     steps:
       - name: verificacionVersion
         run: |
