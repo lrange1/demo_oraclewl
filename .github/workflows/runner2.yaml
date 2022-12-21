@@ -1,5 +1,4 @@
 name: run-mvn
-
 on:
   workflow_dispatch:
     inputs:
@@ -14,9 +13,9 @@ on:
         - debug
 
 jobs:
-  testVersion:
-    runs-on: poc-runner-2
-    steps:
-      - name: verificacionVersion
-        run: |
-          mvn -version
+  testVersion:
+    runs-on: SBBOGLAPPROLR7
+    steps:
+      - name: verificacionVersion
+        run: |
+          mvn -version
