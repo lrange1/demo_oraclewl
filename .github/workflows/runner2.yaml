@@ -10,4 +10,3 @@ jobs:
       - name: verificacionVersion
         run: |
           mvn -version
-
