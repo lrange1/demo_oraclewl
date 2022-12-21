@@ -1,4 +1,4 @@
-name: ConexionVersionLiquibase
+name: run-java
  
 on:
   workflow_dispatch:
