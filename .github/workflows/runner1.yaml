@@ -1,9 +1,8 @@
-name: run-java
-
+name: run-javaVersion
 on:
   workflow_dispatch:
     inputs:
-      logLevel:
+      logLevels:
         description: 'Log level'
         required: true
         default: 'warning'
@@ -14,9 +13,9 @@ on:
         - debug
 
 jobs:
-  testVersion:
-    runs-on: SBBOGLAPPROLR7
-    steps:
-      - name: verificacionVersion
-        run: |
+  testVersionJava:
+    runs-on: poc-runner-2
+    steps:
+      - name: verificacionVersionJava
+        run: |
           java -version
