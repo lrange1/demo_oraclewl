@@ -1,4 +1,4 @@
-name: ConexionVersionLiquibase
+name: run-mvn
  
 on:
   workflow_dispatch:
@@ -9,5 +9,5 @@ jobs:
     steps:
       - name: verificacionVersion
         run: |
-          java -version
+          mvn -version
 
