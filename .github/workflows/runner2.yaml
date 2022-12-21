@@ -1,0 +1,13 @@
+name: ConexionVersionLiquibase
+ 
+on:
+  workflow_dispatch:
+
+jobs:
+  testVersion:
+    runs-on: poc-runner-2
+    steps:
+      - name: verificacionVersion
+        run: |
+          java -version
+

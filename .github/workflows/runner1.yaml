@@ -1,0 +1,13 @@
+name: ConexionVersionLiquibase
+ 
+on:
+  workflow_dispatch:
+
+jobs:
+  testVersion:
+    runs-on: SBBOGLAPPROLR7
+    steps:
+      - name: verificacionVersion
+        run: |
+          java -version
+
